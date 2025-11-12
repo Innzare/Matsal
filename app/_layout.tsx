@@ -1,24 +1,47 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { SplashScreen, Stack } from 'expo-router';
+import { StatusBar, View } from 'react-native';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import '@/assets/styles/global.css';
+import { GlobalBottomSheet } from '@/components/GlobalBottomSheet';
+import { useFonts } from 'expo-font';
+import { useEffect } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const [fontsLoaded, error] = useFonts({
+    'Panton-Bold': require('@/assets/fonts/Panton-Bold.ttf'),
+    'Panton-Light': require('@/assets/fonts/Panton-Light.ttf'),
+    'Panton-Italic': require('@/assets/fonts/Panton-Italic.ttf'),
+    'Panton-Regular': require('@/assets/fonts/Panton-Regular.ttf'),
+    'Panton-SemiBold': require('@/assets/fonts/Panton-SemiBold.ttf')
+  });
+
+  useEffect(() => {
+    if (error) throw error;
+
+    if (fontsLoaded) SplashScreen.hideAsync();
+  }, [fontsLoaded, error]);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <GestureHandlerRootView>
+      <View className="flex-1 relative bg-white">
+        <StatusBar barStyle="light-content" backgroundColor="transparent" translucent={true} />
+
+        <View className="flex-1 relative bg-white">
+          <View className="flex-1">
+            {/* <Tabs screenOptions={{ headerShown: false, tabBarStyle: { display: 'none' } }} /> */}
+            {/* <Stack screenOptions={{ headerShown: false, animation: 'none'}} /> */}
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="(tabs)" options={{ gestureEnabled: false, animation: 'none' }} />
+              <Stack.Screen name="restaurant" options={{ gestureEnabled: true }} />
+            </Stack>
+          </View>
+
+          {/* <BottomNavigation /> */}
+
+          <GlobalBottomSheet />
+        </View>
+      </View>
+    </GestureHandlerRootView>
   );
 }
