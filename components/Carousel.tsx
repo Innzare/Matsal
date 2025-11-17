@@ -29,7 +29,7 @@ export default function Slider() {
   };
 
   return (
-    <View className="mb-10">
+    <View>
       <Carousel
         ref={carouselRef}
         width={width}

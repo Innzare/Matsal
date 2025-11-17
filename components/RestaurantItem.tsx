@@ -1,11 +1,19 @@
 import { Icon } from '@/components/Icon';
 import { Text } from '@/components/Text';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, Pressable, View } from 'react-native';
+import { Pressable, View } from 'react-native';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export default function RestaurantItem(props: any) {
   const { data, block = false } = props;
+  const animation = useSharedValue(1);
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: withTiming(animation.value, { duration: 200, easing: Easing.inOut(Easing.linear) }) }]
+  }));
 
   const { src: imageSrc = '', name = '', deliveryTimeAndPrice = '', rate = '', reviewsCount = '', id = '' } = data;
 
@@ -23,14 +31,27 @@ export default function RestaurantItem(props: any) {
   };
 
   return (
-    <Pressable
-      className="relative overflow-hidden active:scale-95 transition-transform duration-850"
+    <AnimatedPressable
+      onPressIn={() => {
+        animation.value = 0.95;
+      }}
+      onPressOut={() => {
+        animation.value = 1;
+      }}
+      className="relative overflow-hidden"
       onPress={onRestaurantPress}
+      style={[animatedStyle]}
     >
       <Image
-        className={`rounded-xl ${block ? 'w-full h-[190px]' : 'w-[290px] h-[150px]'}`}
+        style={{
+          borderRadius: 10,
+          width: block ? '100%' : 290,
+          height: block ? 190 : 150
+        }}
+        transition={500}
+        cachePolicy="memory-disk"
         source={{ uri: imageSrc }}
-        resizeMode="cover"
+        contentFit="cover"
       />
 
       <Pressable
@@ -53,6 +74,6 @@ export default function RestaurantItem(props: any) {
 
         <Text className="text-sm text-stone-500 mt-0.5">{deliveryTimeAndPrice}</Text>
       </View>
-    </Pressable>
+    </AnimatedPressable>
   );
 }

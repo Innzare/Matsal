@@ -1,16 +1,18 @@
 import AllRestaurantsList from '@/components/AllRestaurantsList';
-import Slider from '@/components/Carousel';
 import Cart from '@/components/Cart';
 import Categories from '@/components/Categories';
 import { Icon } from '@/components/Icon';
+import Map from '@/components/Map';
 import PopularBrands from '@/components/PopularBrands';
 import RestaurantsListPreview from '@/components/RestaurantsListPreview';
 import { Text } from '@/components/Text';
 import { POPULAR_BRANDS, RESTAURANTS, RESTAURANTS2 } from '@/constants/resources';
 import { useBottomSheetStore } from '@/store/useBottomSheetStore';
+import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
-import { Image, Platform, Pressable, RefreshControl, StatusBar, TextInput, TouchableOpacity, View } from 'react-native';
+import { Platform, Pressable, RefreshControl, StatusBar, TextInput, TouchableOpacity, View } from 'react-native';
 import Animated, {
   clamp,
   Extrapolation,
@@ -137,14 +139,21 @@ export default function SearchScreen() {
     openGlobalBottomSheet({
       content: (
         <View className="px-4">
-          <Text>test</Text>
-          <Text>test</Text>
-          <Text>test</Text>
-          <Text>test</Text>
-          <Text>test</Text>
-          <Text>test</Text>
-          <Text>test</Text>
-          <Text>test</Text>
+          <Map></Map>
+
+          <View className="items-start my-6">
+            <TouchableOpacity className="border border-stone-200 p-2 px-4 mb-4 rounded-lg" activeOpacity={0.7}>
+              <Text>+ Добавить новый адрес</Text>
+            </TouchableOpacity>
+
+            <Text>test</Text>
+            <Text>test</Text>
+            <Text>test</Text>
+            <Text>test</Text>
+            <Text>test</Text>
+            <Text>test</Text>
+            <Text>test</Text>
+          </View>
         </View>
       )
     });
@@ -287,106 +296,142 @@ export default function SearchScreen() {
   // });
 
   return (
-    <View className="flex-1 relative" style={{ backgroundColor: '#ea004b', paddingTop: insets.top }}>
+    <View
+      className="flex-1 relative"
+      style={{
+        backgroundColor: '#EA004B',
+        paddingTop: insets.top
+      }}
+    >
       <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
       <Cart isOpen={isCartOpen} close={onCloseCartPress} />
 
-      <View className="flex-1 relative">
-        <Animated.View style={[{ backgroundColor: '#ea004b' }, isAndroid ? headerAnimatedStyle : hiddenBlockStyles]}>
-          <Animated.View
-            className="px-4 mb-6 flex-row justify-between items-center"
-            style={isAndroid ? addressAnimatedStyle2 : addressAnimatedStyle}
-          >
-            <TouchableOpacity className="flex-row items-center gap-2" onPress={onAddressPress} activeOpacity={0.7}>
-              <Icon set="ion" name="location" size={28} color="white" />
+      <LinearGradient
+        colors={['#EA004B', '#000', '#000']}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1.3 }}
+        style={{
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '100%'
+        }}
+      />
 
-              <View className={!isAndroid ? 'mt-1.5' : ''}>
-                <Text className="font-semibold text-white">Магаданская 14</Text>
-                <Text className="text-sm text-stone-200">Грозный</Text>
-              </View>
-            </TouchableOpacity>
+      <Animated.View style={[isAndroid ? headerAnimatedStyle : hiddenBlockStyles]}>
+        <Animated.View
+          className="px-4 mb-6 flex-row justify-between items-center"
+          style={isAndroid ? addressAnimatedStyle2 : addressAnimatedStyle}
+        >
+          <TouchableOpacity className="flex-row items-center gap-2" onPress={onAddressPress} activeOpacity={0.7}>
+            <Icon set="ion" name="location" size={28} color="white" />
 
-            <View className="flex-row gap-3">
-              <Pressable className="w-10 h-10 rounded-full justify-center items-center" onPress={onFavouritesPress}>
-                <Icon set="ion" name="heart-outline" size={21} color="white" />
-              </Pressable>
-
-              <Pressable className="w-10 h-10 rounded-full justify-center items-center" onPress={onCartPress}>
-                <Icon set="feather" name="shopping-bag" size={18} color="white" />
-              </Pressable>
+            <View className={!isAndroid ? 'mt-1.5' : ''}>
+              <Text className="font-semibold text-white">Магаданская 14</Text>
+              <Text className="text-sm text-stone-200">Грозный</Text>
             </View>
-          </Animated.View>
+          </TouchableOpacity>
 
-          <Animated.View
-            className="mx-4 pl-3 bg-white flex-row items-center gap-3 rounded-full"
-            style={isAndroid ? searchInputAnimatedStyle2 : searchInputAnimatedStyle}
-          >
-            <Icon set="feather" name="search" />
-            <TextInput
-              placeholderTextColor="#777777"
-              placeholder="Поиск ресторанов и кафе"
-              value={searchQuery}
-              onChangeText={onSearchQueryChange}
-              className="flex-1 py-3 font-panton leading-[17px]"
-            />
-          </Animated.View>
+          <View className="flex-row gap-3">
+            <Pressable className="w-10 h-10 rounded-full justify-center items-center" onPress={onFavouritesPress}>
+              <Icon set="ion" name="heart-outline" size={21} color="white" />
+            </Pressable>
+
+            <Pressable className="w-10 h-10 rounded-full justify-center items-center" onPress={onCartPress}>
+              <Icon set="feather" name="shopping-bag" size={18} color="white" />
+            </Pressable>
+          </View>
         </Animated.View>
 
-        <Image
-          className="w-full h-[140px] absolute left-0 top-[110px]"
-          source={require('../../assets/images/grozny2.png')}
-          resizeMode="cover"
-        />
-
-        {/* <Animated.View style={[hiddenBlockStyles]}></Animated.View> */}
-
-        <Animated.ScrollView
-          ref={scrollRef}
-          className="rounded-t-3xl relative z-20 bg-white"
-          style={[scrollSpaces]}
-          // pointerEvents={isAnimating.value ? 'none' : 'auto'}
-          // scrollEnabled={!isAnimating.value}
-          automaticallyAdjustContentInsets={false}
-          showsVerticalScrollIndicator={false}
-          onScroll={scrollHandler}
-          contentInsetAdjustmentBehavior="never"
-          scrollEventThrottle={16}
-          removeClippedSubviews={false}
-          overScrollMode="never"
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              className="text-stone-200"
-              tintColor="black"
-              colors={['black']}
-              progressBackgroundColor="black"
-            />
-          }
+        <Animated.View
+          className="mx-4 pl-3 py-1 bg-white  flex-row items-center gap-3 rounded-full"
+          style={isAndroid ? searchInputAnimatedStyle2 : searchInputAnimatedStyle}
         >
-          <View className="rounded-t-3xl py-6 bg-white">
-            <Categories activeCategoryId={activeCategoryId} onCategorySelect={onCategoryPress} />
+          <Icon set="feather" name="search" />
+          <TextInput
+            pointerEvents="none"
+            placeholderTextColor="#777777"
+            placeholder="Поиск ресторанов и кафе"
+            value={searchQuery}
+            onChangeText={onSearchQueryChange}
+            className="flex-1 py-3 font-panton leading-[17px]"
+          />
+        </Animated.View>
+      </Animated.View>
 
-            {activeCategoryId === null && (
-              <>
-                <Slider />
-                {/* <PromoSlide /> */}
-                <RestaurantsListPreview list={RESTAURANTS2} title="🛵 Закажите еще раз" />
+      <Image
+        style={{
+          width: '100%',
+          height: 140,
+          position: 'absolute',
+          left: 0,
+          top: 170
+        }}
+        source={require('../../assets/images/grozny2.png')}
+        transition={500}
+        cachePolicy="memory-disk"
+        contentFit="cover"
+      />
 
-                <PopularBrands list={POPULAR_BRANDS} title="⭐️ Популярные бренды" />
+      {/* <Animated.View style={[hiddenBlockStyles]}></Animated.View> */}
 
-                <RestaurantsListPreview list={RESTAURANTS} title="📍 Рядом с вами" />
+      <Animated.ScrollView
+        ref={scrollRef}
+        className="rounded-t-3xl relative z-20 bg-white"
+        style={[scrollSpaces]}
+        // pointerEvents={isAnimating.value ? 'none' : 'auto'}
+        // scrollEnabled={!isAnimating.value}
+        automaticallyAdjustContentInsets={false}
+        showsVerticalScrollIndicator={false}
+        onScroll={scrollHandler}
+        contentInsetAdjustmentBehavior="never"
+        scrollEventThrottle={16}
+        removeClippedSubviews={false}
+        overScrollMode="never"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="black"
+            colors={['black']}
+            progressBackgroundColor="black"
+          />
+        }
+      >
+        <View className="rounded-t-3xl py-6 bg-white pb-[120px]">
+          <Categories activeCategoryId={activeCategoryId} onCategorySelect={onCategoryPress} />
 
-                <RestaurantsListPreview list={RESTAURANTS2} title="🔁 Часто заказывают" />
-              </>
-            )}
+          <View className="py-1 bg-stone-100 my-8" />
 
-            <View className="py-2 bg-stone-200 mb-8 mt-4" />
+          {/* <Slider /> */}
+          {activeCategoryId === null && (
+            <View>
+              {/* <View className="py-1 bg-stone-100 my-8" /> */}
 
-            <AllRestaurantsList list={[...RESTAURANTS, ...RESTAURANTS2]} title="Все рестораны" />
-          </View>
-        </Animated.ScrollView>
-      </View>
+              <RestaurantsListPreview list={RESTAURANTS2} title="Закажите еще раз" />
+
+              <View className="py-1 bg-stone-100 my-8" />
+
+              <PopularBrands list={POPULAR_BRANDS} title="Популярные бренды" />
+
+              <View className="py-1 bg-stone-100 my-8" />
+
+              <RestaurantsListPreview list={RESTAURANTS} title="Рядом с вами" />
+
+              <View className="py-1 bg-stone-100 my-8" />
+
+              <RestaurantsListPreview list={RESTAURANTS2} title="Часто заказывают" />
+            </View>
+          )}
+
+          {/* <View className="py-2 bg-stone-200 mb-8 mt-4" /> */}
+          <View className="py-1 bg-stone-100 my-8" />
+
+          <AllRestaurantsList list={[...RESTAURANTS, ...RESTAURANTS2]} title="Все рестораны" />
+        </View>
+      </Animated.ScrollView>
     </View>
   );
 }

@@ -1,39 +1,55 @@
 import { Text } from '@/components/Text';
 import { CATEGORIES } from '@/constants/resources';
+import { Image } from 'expo-image';
 import React from 'react';
-import { Image, Pressable, ScrollView, View } from 'react-native';
+import { FlatList, Pressable, View } from 'react-native';
 
 export default function Categories(props: any) {
-  const { activeCategoryId, onCategorySelect } = props;
+  const { activeCategoryId, onCategorySelect, ...rest } = props;
 
   const isActiveCategory = (categoryId: number) => {
     return activeCategoryId === categoryId;
   };
 
   return (
-    <>
+    <View {...rest}>
       <Text className="text-2xl text-stone-800 text-left font-bold mb-2 px-6 font-quicksand-bold">Категории</Text>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View className="flex-row gap-4 mb-6 px-6">
-          {[...CATEGORIES, ...CATEGORIES].map((item, index) => {
-            return (
-              <Pressable
-                key={index}
-                className="items-center gap-2 active:scale-95 transition-transform duration-150"
-                onPress={() => onCategorySelect(item.id)}
-              >
-                <Image
-                  source={{ uri: item.image }}
-                  className={`w-[60px] h-[60px] transition-all rounded-2xl bg-stone-200 overflow-hidden border  ${isActiveCategory(item.id) ? 'border-stone-500 border-2' : 'border-stone-300'}`}
-                />
+      <FlatList
+        data={[...CATEGORIES, ...CATEGORIES]}
+        initialNumToRender={0}
+        keyExtractor={(_, index) => index.toString()}
+        renderItem={({ item }) => {
+          return (
+            <Pressable
+              className="items-center gap-2 active:scale-95 transition-transform duration-150"
+              onPress={() => onCategorySelect(item.id)}
+            >
+              <Image
+                source={{ uri: item.image }}
+                style={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: 10,
+                  overflow: 'hidden',
+                  borderWidth: isActiveCategory(item.id) ? 2 : 1,
+                  borderColor: isActiveCategory(item.id) ? '#3d3d3d' : '#ccc',
+                  backgroundColor: '#eee'
+                }}
+              />
 
-                <Text className="text-sm">{item.name}</Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </ScrollView>
-    </>
+              <Text className="text-sm">{item.name}</Text>
+            </Pressable>
+          );
+        }}
+        contentContainerStyle={{
+          flexDirection: 'row',
+          gap: 15,
+          paddingHorizontal: 24
+        }}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      />
+    </View>
   );
 }

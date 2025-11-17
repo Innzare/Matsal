@@ -1,5 +1,6 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -9,7 +10,8 @@ const IconSet: any = {
   feather: Feather,
   ant: AntDesign,
   material: MaterialIcons,
-  materialCom: MaterialCommunityIcons
+  materialCom: MaterialCommunityIcons,
+  fontAwesome: FontAwesome5
 };
 
 export function Icon({ set = 'ion', name = '', size = 24, color = 'black' }) {

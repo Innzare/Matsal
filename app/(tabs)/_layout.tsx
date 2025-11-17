@@ -31,46 +31,6 @@ export default function RootLayout() {
           {/* <Stack screenOptions={{ gestureEnabled: false, headerShown: false, animation: 'none' }} /> */}
         </View>
 
-        {/* <BottomSheet
-            ref={sheetRef}
-            index={-1}
-            snapPoints={snapPoints}
-            enableDynamicSizing={false}
-            // onChange={handleSheetChange}
-            handleIndicatorStyle={{ display: 'none', borderRadius: 20 }}
-            handleComponent={null}
-            style={{ backgroundColor: 'red', borderRadius: 20 }}
-          >
-            <BottomSheetScrollView>
-              {Array(10)
-                .fill(null)
-                .map((item, index) => {
-                  return <Text key={index}>wer</Text>;
-                })}
-            </BottomSheetScrollView>
-          </BottomSheet> */}
-
-        {/* <Pressable
-            className="p-2 bg-stone-400"
-            onPress={() => {
-              console.log('press');
-
-              sheetRef.current?.expand();
-            }}
-          >
-            <Text>Press</Text>
-          </Pressable>
-          <Pressable
-            className="p-2 bg-stone-400"
-            onPress={() => {
-              console.log('press');
-
-              sheetRef.current?.close();
-            }}
-          >
-            <Text>Close</Text>
-          </Pressable> */}
-
         <BottomNavigation />
       </View>
     </View>

@@ -1,20 +1,12 @@
 import { Icon } from '@/components/Icon';
+import MenuItemContent from '@/components/MenuItemContent';
 import { Text } from '@/components/Text';
 import { RESTAURANTS, RESTAURANTS2 } from '@/constants/resources';
 import { useBottomSheetStore } from '@/store/useBottomSheetStore';
+import { Image as ExpoImage } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
-import {
-  Dimensions,
-  FlatList,
-  Image,
-  Platform,
-  Pressable,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  View
-} from 'react-native';
+import { Dimensions, FlatList, Platform, Pressable, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
 import Animated, {
   Extrapolation,
   interpolate,
@@ -401,6 +393,8 @@ const SECTIONS = [
 
 const { width } = Dimensions.get('window');
 
+const AnimatedImage = Animated.createAnimatedComponent(ExpoImage);
+
 export default function Restaurant() {
   const { id } = useLocalSearchParams();
   const insets = useSafeAreaInsets();
@@ -423,6 +417,7 @@ export default function Restaurant() {
   const tabWidths = useRef<number[]>([]);
   const [activeTab, setActiveTab] = useState(1);
   const [selectedMenuItem, setSelectedMenuItem] = useState(null);
+  const [itemsCount, setItemsCount] = useState(1);
 
   // const [isLoading, setIsLoading] = useState(false);
 
@@ -558,6 +553,22 @@ export default function Restaurant() {
     }
   };
 
+  const onChangeItemsCountPress = (action: string) => {
+    switch (action) {
+      case 'add':
+        setItemsCount((prev) => prev + 1);
+        break;
+
+      case 'reduce':
+        setItemsCount((prev) => prev - 1);
+
+        break;
+
+      default:
+        break;
+    }
+  };
+
   const onSectionsListPress = () => {
     const content = renderSetionsList();
 
@@ -608,41 +619,65 @@ export default function Restaurant() {
   const onMenuItemPress = (item: any) => {
     openGlobalBottomSheet(
       {
-        content: (
-          <View className="px-6 pb-4 relative flex-1 h-[100%]">
-            <View className="flex-row justify-between gap-2">
-              <View className="flex-1">
-                <Text className="text-3xl font-bold mb-4">{item.name}</Text>
-                <Text className="text-sm mb-4">
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quaerat enim sit est magni quidem nemo dicta
-                </Text>
-                <Text className="text-emerald-700 font-bold">{item.price}</Text>
-              </View>
-
-              <Image source={{ uri: item.image }} className="flex-1 aspect-square rounded-xl mb-6" resizeMode="cover" />
-            </View>
-
-            <View className="gap-3">
-              {Array(20)
-                .fill(null)
-                .map((i, x) => {
-                  return <View className="p-3 bg-stone-200" key={x}></View>;
-                })}
-            </View>
-          </View>
-        ),
-        footer: (
-          <View className="px-6 border-t border-stone-200">
-            <TouchableOpacity
-              activeOpacity={0.8}
-              className="mt-2 flex-row justify-center w-full right-0 left-0 bottom-0 bg-red-700 items-center py-4 rounded-full gap-4"
-            >
-              <Text className="text-white font-bold">Добавить в корзину</Text>
-              <Icon set="feather" name="shopping-cart" size={21} color="#fff" />
-            </TouchableOpacity>
-          </View>
-        )
+        content: MenuItemContent(item)
       },
+      // {
+      //   content: (
+      //     <View className="px-6 pb-4 relative flex-1 h-[100%]">
+      //       <View className="flex-row justify-between gap-2">
+      //         <View className="flex-1">
+      //           <Text className="text-3xl font-bold mb-4">{item.name}</Text>
+      //           <Text className="text-sm mb-4">
+      //             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quaerat enim sit est magni quidem nemo dicta
+      //           </Text>
+      //           <Text className="text-emerald-700 font-bold">{item.price}</Text>
+      //         </View>
+
+      //         <Image source={{ uri: item.image }} className="flex-1 aspect-square rounded-xl mb-6" resizeMode="cover" />
+      //       </View>
+
+      //       <View className="gap-4">
+      //         {Array(20)
+      //           .fill(null)
+      //           .map((i, x) => {
+      //             return <View className="p-3 bg-stone-300 rounded-lg" key={x}></View>;
+      //           })}
+      //       </View>
+      //     </View>
+      //   ),
+      //   footer: (
+      //     <View className="flex-row items-center px-6 pt-2 border-t border-stone-200">
+      //       <View className="flex-1 flex-row items-center gap-3">
+      //         <TouchableOpacity
+      //           disabled={itemsCount <= 1}
+      //           activeOpacity={0.7}
+      //           className="rounded-full border border-stone-200 w-[35px] h-[35px] justify-center items-center"
+      //           onPress={() => onChangeItemsCountPress('reduce')}
+      //         >
+      //           <Text className="text-2xl">-</Text>
+      //         </TouchableOpacity>
+
+      //         <Text className="font-bold">{itemsCount}</Text>
+
+      //         <TouchableOpacity
+      //           activeOpacity={0.7}
+      //           className="rounded-full border border-stone-200 w-[35px] h-[35px] justify-center items-center"
+      //           onPress={() => onChangeItemsCountPress('add')}
+      //         >
+      //           <Text className="text-2xl">+</Text>
+      //         </TouchableOpacity>
+      //       </View>
+
+      //       <TouchableOpacity
+      //         activeOpacity={0.8}
+      //         className="px-6 flex-row justify-center right-0 left-0 bottom-0 bg-red-700 items-center py-4 rounded-full gap-4"
+      //       >
+      //         <Text className="text-white font-bold">Добавить в корзину</Text>
+      //         <Icon set="feather" name="shopping-cart" size={21} color="#fff" />
+      //       </TouchableOpacity>
+      //     </View>
+      //   )
+      // },
       ['85%']
     );
   };
@@ -665,7 +700,17 @@ export default function Restaurant() {
                         <Icon set="feather" name="plus" size={21}></Icon>
                       </TouchableOpacity>
 
-                      <Image source={{ uri: item.image }} className="w-[100%] h-[100%] -z-10" resizeMode="cover" />
+                      <ExpoImage
+                        source={{ uri: item.image }}
+                        style={{
+                          zIndex: -10,
+                          width: '100%',
+                          height: '100%'
+                        }}
+                        transition={500}
+                        cachePolicy="memory-disk"
+                        contentFit="cover"
+                      />
                     </View>
 
                     <View className="items-start px-1">
@@ -696,7 +741,17 @@ export default function Restaurant() {
                       <Icon set="feather" name="plus" size={21}></Icon>
                     </TouchableOpacity>
 
-                    <Image source={{ uri: item.image }} resizeMode="cover" className="w-[100%] h-[100%] -z-10" />
+                    <ExpoImage
+                      source={{ uri: item.image }}
+                      style={{
+                        zIndex: -10,
+                        width: '100%',
+                        height: '100%'
+                      }}
+                      transition={500}
+                      cachePolicy="memory-disk"
+                      contentFit="cover"
+                    />
                   </View>
 
                   <View className="items-start px-1 gap-1 mt-1">
@@ -737,10 +792,17 @@ export default function Restaurant() {
                     <Icon set="feather" name="plus" size={21}></Icon>
                   </TouchableOpacity>
 
-                  <Image
+                  <ExpoImage
                     source={{ uri: item.image }}
-                    resizeMode="cover"
-                    className="rounded-xl w-[100%] h-[100%] -z-10"
+                    style={{
+                      zIndex: -10,
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 10
+                    }}
+                    transition={500}
+                    cachePolicy="memory-disk"
+                    contentFit="cover"
                   />
                 </View>
               </View>
@@ -784,14 +846,14 @@ export default function Restaurant() {
             className="p-0.5 border border-stone-300 rounded-full flex-row bg-stone-200"
           >
             <View
-              className={`py-1 px-2.5 border border-transparent ${deliveryType === 'delivery' ? 'border border-stone-300' : ''}`}
+              className={`py-1 px-2.5 border ${deliveryType === 'delivery' ? ' border-stone-300' : 'border-transparent'}`}
               style={{ borderRadius: 100, backgroundColor: deliveryType === 'delivery' ? '#fff' : 'transparent' }}
             >
               <Icon set="material" name="delivery-dining" color={deliveryType === 'delivery' ? '#000' : '#aaa'} />
             </View>
 
             <View
-              className={`py-1 px-2.5 border border-transparent ${deliveryType === 'pickup' ? 'border border-stone-300' : ''}`}
+              className={`py-1 px-2.5 border ${deliveryType === 'pickup' ? ' border-stone-300' : 'border-transparent'}`}
               style={{ borderRadius: 100, backgroundColor: deliveryType === 'pickup' ? '#fff' : 'transparent' }}
             >
               <Icon set="material" name="directions-walk" color={deliveryType === 'pickup' ? '#000' : '#aaa'} />
@@ -896,13 +958,32 @@ export default function Restaurant() {
         style={[headerImageStyle, { backgroundColor: '#ea004b' }]}
         className="w-full absolute top-0 left-0 z-30 min-h-[120px]"
       >
-        <Animated.Image
+        {/* <AnimatedImage
           source={{ uri: currentRestaurant?.src }}
-          className="h-full w-full"
-          style={[ImageOpacityStyle]}
+          style={[
+            ImageOpacityStyle,
+            {
+              width: '100%',
+              height: '100%'
+            }
+          ]}
           // style={[headerImageStyle]}
           resizeMode={'cover'}
-        ></Animated.Image>
+        ></AnimatedImage> */}
+
+        <AnimatedImage
+          style={[
+            {
+              width: '100%',
+              height: '100%'
+            },
+            ImageOpacityStyle
+          ]}
+          transition={500}
+          cachePolicy="memory-disk"
+          source={{ uri: currentRestaurant?.src }}
+          contentFit="cover"
+        />
 
         <Animated.View
           className="absolute top-0 left-0 w-full z-10 flex-row items-center justify-between px-4 mt-4 gap-4"
@@ -980,19 +1061,8 @@ export default function Restaurant() {
             {...props}
             style={style}
             onLayout={(event) => {
-              const { y, height } = event.nativeEvent.layout;
-              console.log(`Секция ${index}: y=${y}, height=${height}`);
-
-              // if (index > 0) sectionOffsets.current[index - 1] = y;
+              const { y } = event.nativeEvent.layout;
               sectionOffsets.current[index] = y;
-
-              // sectionOffsets.current[index].measureLayout(
-              //   scrollRef.current, // относительно самого FlatList
-              //   (x: any, y: any) => {
-              //     scrollRef.current?.scrollToOffset({ offset: y, animated: true });
-              //   },
-              //   (error: any) => console.log(error)
-              // );
             }}
           >
             {children}

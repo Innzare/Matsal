@@ -1,6 +1,7 @@
+import Map from '@/components/Map';
 import { Text } from '@/components/Text';
 import React from 'react';
-import { Modal, Pressable, StyleSheet, View } from 'react-native';
+import { Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function Cart(props: any) {
   const { isOpen, close } = props;
@@ -10,12 +11,13 @@ export default function Cart(props: any) {
       <View style={styles.overlay}>
         <View style={styles.modal}>
           {/* Крестик */}
-          <Pressable style={styles.closeButton} onPress={close}>
+          <TouchableOpacity activeOpacity={0.7} style={styles.closeButton} onPress={close}>
             <Text style={styles.closeText}>✕</Text>
-          </Pressable>
+          </TouchableOpacity>
+
+          <Map />
 
           {/* Контент */}
-          <Text style={styles.modalText}>Это корзина товаров</Text>
         </View>
       </View>
     </Modal>
@@ -38,7 +40,15 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   overlay: {
-    flex: 1,
+    // flex: 1,
+    borderRadius: 20,
+    overflow: 'hidden',
+    maxHeight: '80%',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '100%',
     backgroundColor: 'rgba(0,0,0,0.6)', // затемнение фона
     justifyContent: 'center',
     alignItems: 'center'
@@ -46,14 +56,27 @@ const styles = StyleSheet.create({
   modal: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#fff',
-    paddingTop: 50 // место для крестика
+    overflow: 'hidden',
+    borderTopLeftRadius: '20',
+    borderTopRightRadius: '20',
+    backgroundColor: '#fff'
+    // paddingTop: 50 // место для крестика
   },
   closeButton: {
     position: 'absolute',
-    top: 60,
+    top: 20,
     right: 20,
-    zIndex: 10
+    zIndex: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 100,
+    padding: 6,
+    paddingTop: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 40,
+    height: 40,
+    backgroundColor: '#fff'
   },
   closeText: {
     fontSize: 24,
